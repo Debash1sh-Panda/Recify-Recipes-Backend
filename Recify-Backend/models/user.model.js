@@ -45,7 +45,7 @@ const userSchema = new mongoose.Schema(
       default: "user",
     },
     refreshToken: String,
-    reetPasswordTokenData: {
+    resetPasswordTokenData: {
       type: resetPasswordTokenDataSchema,
     },
     socialMediaLink: {

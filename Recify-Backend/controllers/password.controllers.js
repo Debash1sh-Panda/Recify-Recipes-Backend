@@ -44,6 +44,8 @@ exports.resetPasswordRequest = async (req, res) => {
     return res.status(200).json({
       success: true,
       message: "A password reset link has been sent to your email.",
+      resetToken: resetToken,
+      resetTokenExpire: "10 minutes"
     });
   } catch (error) {
     console.error("❌ Error in resetPasswordRequest:", error);
@@ -127,7 +129,8 @@ exports.resetPassword = async (req, res) => {
     };
 
     await user.save();
-    await sendPasswordChangeEmail(user);
+    //FIXME: send password change confirmation email
+    // await sendPasswordChangeEmail(user);
 
     return res.status(200).json({
       success: true,
@@ -211,7 +214,7 @@ exports.updatePassword = async (req, res) => {
 
     user.password = await bcrypt.hash(newPassword, 10);
     await user.save();
-    await sendPasswordChangeEmail(user);
+    // await sendPasswordChangeEmail(user);
 
     res.status(200).json({
       success: true,
