@@ -1,3 +1,4 @@
+const cloudinary = require("../config/cloudinary.config");
 const getDataUri = require("../config/datauri.config");
 const userModel = require("../models/user.model");
 
