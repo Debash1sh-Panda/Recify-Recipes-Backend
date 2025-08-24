@@ -191,13 +191,13 @@ exports.signIn = async (req, res) => {
 
 exports.logout = async (req, res) => {
   try {
-    // const userId = req.user.id;
-    // if (userId) {
-    //   await userModel.findByIdAndUpdate(userId, {
-    //     refreshToken: null,
-    //     isActive: false,
-    //   });
-    // }
+    const userId = req.user.id;
+    if (userId) {
+      await userModel.findByIdAndUpdate(userId, {
+        refreshToken: null,
+        isActive: false,
+      });
+    }
 
     res
       .status(200)

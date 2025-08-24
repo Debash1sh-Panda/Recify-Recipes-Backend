@@ -1,7 +1,9 @@
 const express = require("express");
-const { getUserDetails } = require("../controllers/user.controller");
+const { getUserDetails, updateUserProfile } = require("../controllers/user.controller");
+const { isAuth } = require("../middlewares/isAuth.middlewares");
 const route = express.Router();
 
-route.get("/details", getUserDetails);
+route.get("/details", isAuth, getUserDetails);
+route.put("/edit-profile", isAuth, updateUserProfile);
 
 module.exports = route;

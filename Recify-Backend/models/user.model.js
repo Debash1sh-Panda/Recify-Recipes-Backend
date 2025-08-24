@@ -14,6 +14,16 @@ const resetPasswordTokenDataSchema = new mongoose.Schema(
   { _id: false }
 );
 
+const socialMediaLink = new mongoose.Schema(
+  {
+    youtube: String,
+    insta: String,
+    facebook: String,
+    twitter: String,
+  },
+  { _id: false }
+);
+
 const userSchema = new mongoose.Schema(
   {
     fullname: String,
@@ -38,6 +48,9 @@ const userSchema = new mongoose.Schema(
     reetPasswordTokenData: {
       type: resetPasswordTokenDataSchema,
     },
+    socialMediaLink: {
+      type: socialMediaLink,
+    }
   },
   { timestamps: true, versionKey: false }
 );
