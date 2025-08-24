@@ -50,7 +50,19 @@ const userSchema = new mongoose.Schema(
     },
     socialMediaLink: {
       type: socialMediaLink,
-    }
+    },
+    followers: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User",
+      },
+    ],
+    following: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User",
+      },
+    ],
   },
   { timestamps: true, versionKey: false }
 );

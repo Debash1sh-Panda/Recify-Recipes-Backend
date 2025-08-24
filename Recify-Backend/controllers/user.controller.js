@@ -37,6 +37,43 @@ exports.getUserDetails = async (req, res) => {
   }
 };
 
+exports.getPublicUserDetails = async (req, res) => {
+  try {
+    const userId = req.params.id;
+
+    const user = await userModel
+      .findById(userId)
+      .select(
+        "username fullname profile_image bio socialMediaLink followers following"
+      );
+
+    if (!user) return res.status(404).json({ message: "User not found" });
+
+    // Basic public data
+    const profileData = {
+      username: user.username,
+      fullname: user.fullname,
+      profile_image: user.profile_image,
+      bio: user.bio,
+      socialMediaLink: user.socialMediaLink,
+      followersCount: user.followers?.length || 0,
+      followingCount: user.following?.length || 0,
+      postsCount: user.posts?.length || 0,
+      posts: user.posts || [],
+    };
+
+    // Extra info if requester is logged in
+    if (req.user) {
+      profileData.isFollowing = user.followers?.includes(req.user.id) || false;
+    }
+
+    res.status(200).json({ success: true, user: profileData });
+  } catch (err) {
+    console.error("Error fetching user profile:", err);
+    res.status(500).json({ message: "Server error" });
+  }
+};
+
 exports.updateUserProfile = async (req, res) => {
   try {
     const { fullname, bio, pronouns, socialType, socialUrl } = req.body;
@@ -105,5 +142,51 @@ exports.updateUserProfile = async (req, res) => {
     res
       .status(500)
       .json({ message: "Server error while updating user profile." });
+  }
+};
+
+exports.followUser = async (req, res) => {
+  try {
+    const user = await userModel.findById(req.user.id); // logged in user
+    const target = await userModel.findById(req.params.id); // user to follow
+
+    if (!target) return res.status(404).json({ message: "User not found" });
+
+    if (!user.following.includes(target._id)) {
+      user.following.push(target._id);
+      target.followers.push(user._id);
+
+      await user.save();
+      await target.save();
+      return res.json({ message: "Followed successfully" });
+    }
+    res.json({ message: "Already following" });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
+
+exports.unFollowUser = async (req, res) => {
+  try {
+    const user = await userModel.findById(req.user.id); // logged-in user
+    const target = await userModel.findById(req.params.id); // user to unfollow
+
+    if (!target) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    if (user.following.includes(target._id)) {
+      user.following.pull(target._id);
+      target.followers.pull(user._id);
+
+      await user.save();
+      await target.save();
+
+      return res.json({ message: "Unfollowed successfully" });
+    }
+
+    res.json({ message: "You are not following this user" });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
   }
 };
